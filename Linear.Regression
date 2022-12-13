@@ -1,0 +1,30 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.linear_model import LinearRegression
+from pandas import DataFrame
+
+file = "cost_revenue.csv"
+df = pd.read_csv(file)
+
+print(df.head())
+
+print(df.describe())
+X = DataFrame(df, columns=["production_budget"])
+y = DataFrame(df, columns=["worldwide_gross"])
+
+regression = LinearRegression()
+regression.fit(X, y)
+# slop Coefficient
+print(regression.coef_)
+print(regression.intercept_)
+print(f"The R squared is: {regression.score(X,y)}")
+
+plt.figure(figsize=(10, 6))
+plt.plot(X, regression.predict(X), color="red", linewidth = 4)
+plt.scatter(X, y, alpha=0.3)
+plt.title("Movie Cost vs Global Revenue")
+plt.xlabel("Global Revenue$")
+plt.ylabel("Movie Production Cost$")
+plt.xlim(0, 450000000)
+plt.ylim(0, 3000000000)
+plt.show()
