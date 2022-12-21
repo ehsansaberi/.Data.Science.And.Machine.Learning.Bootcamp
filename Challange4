@@ -1,0 +1,562 @@
+# Notebook Imports and Packages
+
+import matplotlib.pyplot as plt
+import numpy as np
+
+from mpl_toolkits.mplot3d.axes3d import Axes3D
+from matplotlib import cm # color map
+
+from sympy import symbols, diff
+from math import log
+
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error
+
+%matplotlib inline
+## Example 1- A simple cost function
+
+### $$f(x) = x^2 + x + 1$$
+def  f(x):
+    return x ** 2 +x + 1
+# Slope & Derivatives 
+def df(x):
+    return 2 * x + 1
+x_1 = np.linspace(start = -3 , stop= 3 , num = 100)
+plt.figure(figsize = [14, 5])
+
+# Chart 1: Cost Funstion 
+plt.subplot(1,2,1)
+plt.title("Cost Funstion",fontsize = 18)
+plt.xlim(-3.5,3.5)
+plt.ylim(0, 10)
+plt.xlabel("X" , fontsize = 15)
+plt.ylabel("f(X)" , fontsize = 15)
+plt.plot(x_1, f(x_1), color = "#E64A19", lw = 3)
+
+# Chart 2: Derivative
+plt.subplot(1,2,2)
+plt.title("Slope of cost Function",fontsize = 18)
+plt.xlim(-3,6)
+plt.ylim(-3, 6)
+plt.grid()
+plt.xlabel("X" , fontsize = 15)
+plt.ylabel("df(X)"  ,fontsize = 15)
+plt.plot(x_1, df(x_1), color = "#03A9F4")
+
+plt.show()
+## Python loops & Gradient Descent
+new_x = 3
+previous_x = 0
+step_multiplier = .1
+precision = .00001
+
+x_list = [new_x]
+slop_list = [df(new_x)]
+
+for n in range(500000):
+    previous_x = new_x
+    gradient = df(previous_x)
+    new_x = previous_x - step_multiplier * gradient
+    step_size = abs(previous_x - new_x)
+    #print(step_size)
+    x_list.append(new_x)
+    slop_list.append(df(new_x))
+    if step_size < precision:
+        print(n) 
+        break
+
+print("Local minimum occure at:", new_x)
+print("slope or df(x) value at this ppint is:" , df(new_x))
+print("f(x) value or cost at this point is:", f(new_x))
+plt.figure(figsize = [14, 5])
+
+# Chart 1: Cost Funstion 
+plt.subplot(1,2,1)
+plt.title("Cost Funstion",fontsize = 18)
+plt.xlim(-3.5,3.5)
+plt.ylim(0, 10)
+plt.xlabel("X" , fontsize = 15)
+plt.ylabel("f(X)" , fontsize = 15)
+values = np.array(x_list)
+plt.scatter(x= x_list, y= f(values), color= "b" , s= 100, alpha= .6)
+plt.plot(x_1, f(x_1), color = "#E64A19", lw = 3, alpha= .8)
+
+# Chart 2: Derivative
+plt.subplot(1,2,2)
+plt.title("Slope of cost Function",fontsize = 18)
+plt.xlim(-3,6)
+plt.ylim(-3, 6)
+plt.grid()
+plt.xlabel("X" , fontsize = 15)
+plt.ylabel("df(X)"  ,fontsize = 15)
+plt.scatter(x= x_list, y= df(values), color= "r" , s= 100, alpha= .6)
+plt.plot(x_1, df(x_1), color = "#03A9F4", alpha= .8)
+
+plt.show()
+plt.figure(figsize = [20, 5])
+
+# Chart 1: Cost Funstion 
+plt.subplot(1,3,1)
+plt.title("Cost Funstion",fontsize = 18)
+plt.xlim(-3.5,3.5)
+plt.ylim(0, 10)
+plt.xlabel("X" , fontsize = 15)
+plt.ylabel("f(X)" , fontsize = 15)
+values = np.array(x_list)
+plt.scatter(x= x_list, y= f(values), color= "b" , s= 100, alpha= .6)
+plt.plot(x_1, f(x_1), color = "#E64A19", lw = 3, alpha= .8)
+
+# Chart 2: Derivative
+plt.subplot(1,3,2)
+plt.title("Slope of cost Function",fontsize = 18)
+plt.xlim(-3,6)
+plt.ylim(-3, 6)
+plt.grid()
+plt.xlabel("X" , fontsize = 15)
+plt.ylabel("df(X)"  ,fontsize = 15)
+plt.scatter(x= x_list, y= df(values), color= "r" , s= 100, alpha= .6)
+plt.plot(x_1, df(x_1), color = "#03A9F4", alpha= .8)
+
+# Chart 3: Close up
+plt.subplot(1,3,3)
+plt.xlim(-.55,.0)
+plt.ylim(-.2, .9)
+plt.grid()
+plt.xlabel("X" , fontsize = 15)
+plt.ylabel("df(X)"  ,fontsize = 15)
+plt.scatter(x= x_list, y= df(values), color= "r" , s= 100, alpha= .6)
+plt.plot(x_1, df(x_1), color = "#03A9F4", alpha= .8)
+
+plt.show()
+## Example 2 - Multiple Min vs Initial Guess & Advanced Fun
+
+### $$ g(x) = x^4 - 4 x^2 + 5 $$
+# Make data
+x_2 = np.linspace(-2,2,100)
+def g(x):
+    return x**4 - 4*x**2 + 5
+def dg(x):
+    return 4*x**3 - 8*x
+plt.figure(figsize = [14, 5])
+
+# Chart 1: Cost Funstion 
+plt.subplot(1,2,1)
+plt.title("Cost Funstion",fontsize = 18)
+plt.xlim(-2,2)
+plt.ylim(0, 6)
+plt.xlabel("X" , fontsize = 15)
+plt.ylabel("g(X)" , fontsize = 15)
+plt.plot(x_2, g(x_2), color = "#E64A19", lw = 3)
+
+# Chart 2: Derivative
+plt.subplot(1,2,2)
+plt.title("Slope of cost Function",fontsize = 18)
+plt.xlim(-2,2)
+plt.ylim(-6, 8)
+plt.grid()
+plt.xlabel("X" , fontsize = 15)
+plt.ylabel("dg(X)"  ,fontsize = 15)
+plt.plot(x_2, df(x_2), color = "#03A9F4")
+
+plt.show()
+def gradient_descent(derivative_func, initial_guess, multiplier=.01, precision=.0001,
+                    max_iter= 300):
+    new_x = initial_guess 
+    x_list = [new_x]
+    slop_list = [derivative_func(new_x)]
+
+    for n in range(max_iter):
+        previous_x = new_x
+        gradient = derivative_func(previous_x)
+        new_x = previous_x - multiplier * gradient
+        step_size = abs(previous_x - new_x)
+        #print(step_size)
+        x_list.append(new_x)
+        slop_list.append(derivative_func(new_x))
+        
+        if step_size < precision:
+            break
+    return new_x, x_list, slop_list    
+local_min, list_x, deriv_list = gradient_descent(derivative_func=dg, initial_guess=.5)
+print("Local min occurs at:", local_min)
+print("Number of steps:", len(list_x)) 
+local_min, list_x, deriv_list = gradient_descent(derivative_func=dg,multiplier=.01, initial_guess= 2)
+
+plt.figure(figsize = [15, 5])
+
+# Chart 1: Cost Funstion 
+plt.subplot(1,2,1)
+plt.title("Cost Funstion",fontsize = 18)
+plt.xlim(-2,2)
+plt.ylim(0, 6)
+plt.xlabel("X" , fontsize = 15)
+plt.ylabel("g(X)" , fontsize = 15)
+plt.plot(x_2, g(x_2), color = "#E64A19", lw = 3,alpha= .8)
+plt.scatter(list_x, g(np.array(list_x)), c= "b", s= 100, alpha= .5)
+
+# Chart 2: Derivative
+plt.subplot(1,2,2)
+plt.title("Slope of cost Function",fontsize = 18)
+plt.xlim(-2,2)
+plt.ylim(-6, 8)
+plt.grid()
+plt.xlabel("X" , fontsize = 15)
+plt.ylabel("dg(X)"  ,fontsize = 15)
+plt.plot(x_2, dg(x_2), color = "#03A9F4", alpha = .8, lw= 4)
+plt.scatter(list_x, deriv_list, c= "r", s= 100, alpha= .5)
+
+plt.show()
+## Example 3 - Divergence, Overflow and Python Tuples
+
+### $$h(x) = x^5 - 2x^4 + 2 $$
+x_3 = np.linspace(start=-2,stop=2, num= 1000 )
+def h(x):
+    return x ** 5 - 2 * x ** 4 + 2 
+def dh(x):
+    return 5 * x ** 4 - 8 * x**3
+data_tuple = gradient_descent(derivative_func=dh ,multiplier=.02, initial_guess= .5,
+                                                max_iter= 500)
+
+plt.figure(figsize = [15, 5])
+
+# Chart 1: Cost Funstion 
+plt.subplot(1,2,1)
+plt.title("Cost Funstion",fontsize = 18)
+plt.xlim(-2,2.5)
+plt.ylim(-3, 3)
+plt.xlabel("X" , fontsize = 15)
+plt.ylabel("h(X)" , fontsize = 15)
+plt.plot(x_3, h(x_3), color = "#E64A19", lw = 3,alpha= .8)
+plt.scatter(list_x, h(np.array(list_x)), c= "b", s= 100, alpha= .5)
+
+# Chart 2: Derivative
+plt.subplot(1,2,2)
+plt.title("Slope of cost Function",fontsize = 18)
+plt.xlim(-1.5,2)
+plt.ylim(-6, 8)
+plt.grid()
+plt.xlabel("X" , fontsize = 15)
+plt.ylabel("dh(X)"  ,fontsize = 15)
+plt.plot(x_3, dh(x_3), color = "#03A9F4", alpha = .8, lw= 4)
+plt.scatter(list_x, deriv_list, c= "r", s= 100, alpha= .5)
+
+plt.show()
+
+print("Local min occures at: ", data_tuple[0])
+print("Cost at this min is: ", h(data_tuple[0]))
+print("Number of steps: ", len(data_tuple[1]))
+# The learning Rate
+
+local_min, list_x, deriv_list = gradient_descent(derivative_func=dg,multiplier=.025,
+                                                 initial_guess= 1.9, max_iter= 500,  )
+
+plt.figure(figsize = [15, 5])
+
+# Chart 1: Cost Funstion 
+plt.subplot(1,2,1)
+plt.title("Cost Funstion",fontsize = 18)
+plt.xlim(-2,2)
+plt.ylim(0, 6)
+plt.xlabel("X" , fontsize = 15)
+plt.ylabel("g(X)" , fontsize = 15)
+plt.plot(x_2, g(x_2), color = "#E64A19", lw = 3,alpha= .8)
+plt.scatter(list_x, g(np.array(list_x)), c= "b", s= 100, alpha= .5)
+
+# Chart 2: Derivative
+plt.subplot(1,2,2)
+plt.title("Slope of cost Function",fontsize = 18)
+plt.xlim(-2,2)
+plt.ylim(-6, 8)
+plt.grid()
+plt.xlabel("X" , fontsize = 15)
+plt.ylabel("dg(X)"  ,fontsize = 15)
+plt.plot(x_2, dg(x_2), color = "#03A9F4", alpha = .8, lw= 4)
+plt.scatter(list_x, deriv_list, c= "r", s= 100, alpha= .5)
+
+plt.show()
+print("Number of steps", len(list_x))
+# Run gradient descent 3 Times
+n = 100
+low_gamma = gradient_descent(derivative_func=dg,multiplier=.0005,
+                                                 initial_guess= 3, max_iter= n, precision= .0001)
+mid_gamma = gradient_descent(derivative_func=dg,multiplier=.001,
+                                                 initial_guess= 3, max_iter= n, precision= .0001)
+high_gamma = gradient_descent(derivative_func=dg,multiplier=.002 ,
+                                                 initial_guess= 3, max_iter= n, precision= .0001)
+# plotting reduction in cost for each iteration
+plt.figure(figsize = [30, 10])
+
+plt.xlim(0,n)
+plt.ylim(0,50)
+
+# Chart 1: Cost Funstion 
+plt.subplot(1,2,1)
+plt.title("Effect of the learning rate",fontsize = 18)
+
+plt.xlabel("Nr of iterations" , fontsize = 15)
+plt.ylabel("cost" , fontsize = 15)
+
+# Value for chars
+# Y_axis:
+low_value = np.array(low_gamma[1])
+mid_value = np.array(mid_gamma[1])
+high_value = np.array(high_gamma[1])
+#X_axis:
+iteration_list = [_ for _ in range (1, 102)]
+
+# Plotting Low Gamma
+plt.scatter(iteration_list, g(low_value), c = "green", s = 50)
+plt.plot(iteration_list, g(low_value), c = "lightgreen", lw = 5)
+
+
+# Plotting Mid Gamma
+plt.plot(iteration_list, g(mid_value), c = "red", lw = 5)
+plt.scatter(iteration_list, g(mid_value), c = "red", s = 50)
+
+# Plotting High Gamma
+
+plt.plot(iteration_list, g(high_value), c = "blue", lw = 5)
+plt.scatter(iteration_list, g(high_value), c = "blue", s = 50)
+## Example 4 - Data Viz with 3D Charts
+### Minimize  $$f(x,y) = \frac {1}{r + 1}$$
+ ### where $r$ is equal to  $3^{-x^2 - y^2}$
+
+def f(x, y):
+    r = 3**(-x**2 - y**2)
+    return 1 / (r + 1)
+x_4 = np.linspace(start= -2 ,stop= 2, num= 200 )
+y_4 = np.linspace(start= -2 ,stop= 2, num= 200 )
+ 
+x_4, y_4 = np.meshgrid(x_4, y_4 )
+fig = plt.figure(figsize= [6,6])
+ax = fig.add_subplot(projection='3d')
+
+ax.set_xlabel("X", fontsize = 20)
+ax.set_ylabel("Y", fontsize = 20)
+ax.set_zlabel("f(X,Y)", fontsize = 20)
+
+ax.plot_surface(x_4, y_4, f(x_4,y_4), cmap=cm.viridis, alpha=0.8)
+plt.show()
+### Partial Derivatives & Symbolic Computation
+$$\frac{\partial f}{\partial x} =  \frac{2x\ln (3) \cdot 3^{-x^2 - y^2}}{\left( 3^{-x^2 - y^2}+ 1 \right) ^2}$$
+
+
+
+$$\frac{\partial f}{\partial y} =  \frac{2x\ln (3) \cdot 3^{-x^2 - y^2}}{\left( 3^{-x^2 - y^2}+ 1 \right) ^2}$$
+a, b = symbols("x, y")
+print("Our cost Func f(x, y) is:", f(a,b))
+dfx = diff(f(a,b), a)
+dfy = diff(f(a,b), b)
+print("Partial derivative wrt x is:", dfx)
+print("Partial derivative wrt x is:", dfy)
+
+      
+print("Value of f(x,y) at x= 1.8 and y=0 is:",f(a, b).evalf(subs = {a: 2.8, b: 1.0}))
+print("Value of df(x,y) wrt x at x= 1.8 and y=0 is:",diff(f(a, b),a).evalf(subs = {a: 1.8, b: 1.0}))
+### Batch Gradient Descent with SymPy
+# Setup
+multiplier = .1
+max_tier = 500
+params = np.array([1.8, 1.0]) # initial guess
+
+for n in range(max_tier):
+    gradient_x = diff(f(a,b), a).evalf(subs = {a:params[0], b:params[1]})
+    gradient_y = diff(f(a,b), b).evalf(subs = {a:params[0], b:params[1]})
+    gradients = np.array([gradient_x, gradient_y])
+    params = params - multiplier * gradient
+    
+# Results:
+print("values in gradient array", gradients)
+print("Minimum occurs at x value of:", params[0])
+print("Minimum occurs at y value of:", params[1]) 
+print("The cost is: ",f(params[0], params[1]))    
+def fpx(x,y):
+    r = 3**(-x**2 - y**2)
+    return 2*x*log(3)*r / (r + 1) ** 2
+
+def fpy(x,y):
+    r = 3**(-x**2 - y**2)
+    return 2* y* log(3)*r / (r + 1) ** 2    
+  # Setup
+multiplier = .1
+max_tier = 500
+params = np.array([1.8, 1.0]) # initial guess
+
+for n in range(max_tier):
+    gradient_x = fpx(params[0], params[1])
+    gradient_y = fpy(params[0], params[1])
+    gradients = np.array([gradient_x, gradient_y])
+    params = params - multiplier * gradients
+    
+print('Values in gradient array', gradients)
+print('Minimum occurs at x value of: ', params[0])
+print('Minimum occurs at y value of: ', params[1])
+print('The cost is: ', f(params[0], params[1]))    
+ ## Graphing 3D Gradien Descent & Adv. Numpy Arrays
+multiplier = .3
+max_tier = 500
+params = np.array([1.8, 1.0]) # initial guess
+values_array = params.reshape(1,2)
+
+for n in range(max_tier):
+    gradient_x = fpx(params[0], params[1])
+    gradient_y = fpy(params[0], params[1])
+    gradients = np.array([gradient_x, gradient_y])
+    params = params - multiplier * gradients
+    values_array = np.append(arr= values_array, values= params.reshape(1,2), axis= 0)
+    
+print('Values in gradient array', gradients)
+print('Minimum occurs at x value of: ', params[0])
+print('Minimum occurs at y value of: ', params[1])
+print('The cost is: ', f(params[0], params[1])) 
+# Advanced Numpy array prectice:
+# kirk = np.array([["Campatian","Guitar"]])
+
+# hs_band = np.array([["Black Thought", "MC"], ["QuestLove","Drums"]])
+# hs_band[0][1]
+# the_roots = np.append(arr= hs_band, values= kirk , axis= 0)
+# the_roots
+# the_roots = np.append(arr= the_roots, values= [["Ehsan", "piano"]], axis= 0)
+# the_roots
+fig = plt.figure(figsize= [10,10])
+ax = fig.add_subplot(projection='3d')
+
+ax.set_xlabel("X", fontsize = 20)
+ax.set_ylabel("Y", fontsize = 20)
+ax.set_zlabel("f(X,Y)", fontsize = 20)
+
+ax.plot_surface(x_4, y_4, f(x_4,y_4), cmap=cm.viridis, alpha=0.8)
+ax.scatter(values_array[:,0],values_array[:,1], 
+           f(values_array[:,0],values_array[:,1]), 
+           s= 50, color = "black" )
+plt.show()
+## Example 5 - Working with Data & a Real Cost Func
+### Mean Squared Error: a cost func for regression problems
+
+### $$RSS = \sum_{i=1}^{n}\big(y^{(i)} - h_\theta x^{(i)} \big)^2 $$
+### $$MSE = \frac{1}{n}\sum_{i=1}^{n}\big(y^{(i)} - h_\theta x^{(i)} \big)^2 $$
+### $$MSE = \frac{1}{n}\sum_{i=1}^{n}\big(y - \hat{y}\big)^2 $$
+# Make sample data  
+x_5 = np.array([[0.1, 1.2, 2.4, 3.2, 4.1, 5.7, 6.5]]).transpose()
+y_5 = np.array([1.7, 2.4, 3.5, 3.0, 6.1, 9.4, 8.2]).reshape(7,1)
+
+print('Shape of x_5 array:', x_5.shape)
+print('Shape of y_5 array:', y_5.shape)
+# Quick linear regression
+regr = LinearRegression()
+regr.fit(x_5,y_5)
+
+print("Theta 0: ", regr.intercept_[0])
+print("Theta 1: ", regr.coef_[0][0])
+plt.scatter(x_5, y_5, s= 50)
+plt.plot(x_5, regr.predict(x_5), color= "orange", linewidth = 3)
+plt.xlabel("x values")
+plt.ylabel("y values")
+## 3D Plot for the MSE Cost Function
+
+###  Make data for thetas
+# y_hat = theta_0 + theta_1* x  
+y_hat = 0.8475351486029536 + 1.2227264637835915 * x_5
+print("Est values y_hat are: \n",y_hat)
+print("In comprasion with actual y values are: \n", y_5)
+def mse(y , y_hat):
+    # mse_calc = sum((y- y_hat) ** 2()
+    # return (1 / y.size) * mse_calc  
+    
+    mse_calc = np.average((y- y_hat) ** 2 , axis= 0 )
+    return mse_calc
+print("Manually calculated MSE is : ", mse(y_hat, y_5)[0])
+print("MSE regression using manual calc is : ", mean_squared_error(y_hat, y_5))
+print("MSE regression is : ", mean_squared_error(y_5, regr.predict(x_5)))
+nr_thetas = 200
+th_0 = np.linspace(start= -1, stop=3, num= nr_thetas)
+th_1 = np.linspace(start= -1, stop=3, num= nr_thetas)
+plot_t0, plot_t1 = np.meshgrid(th_0, th_1)
+### Calc MSE using nested for loops
+plot_cost = np.zeros((nr_thetas ,nr_thetas))
+for i in range(nr_thetas):
+    for j in range(nr_thetas):
+        # print(plot_t0[i][j]) 
+        y_hat = plot_t0[i][j] + plot_t1[i][j] * x_5 
+        plot_cost[i][j] = mse(y_5, y_hat)
+plot_cost       
+# Plotting MSE
+fig = plt.figure(figsize= [10,10])
+ax = fig.add_subplot(projection='3d')
+
+ax.set_xlabel("Theta 0", fontsize = 20)
+ax.set_ylabel("Theta 1", fontsize = 20)
+ax.set_zlabel("Cost MSE", fontsize = 20)
+
+ax.plot_surface(plot_t0, plot_t1, plot_cost, cmap=cm.hot, alpha=0.8)
+plt.show()
+#ax.scatter(values_array[:,0],values_array[:,1], 
+           #f(values_array[:,0],values_array[:,1]), 
+print('Min value of plot_cost', plot_cost.min())
+ij_min = np.unravel_index(indices=plot_cost.argmin(),shape=plot_cost.shape )
+
+print('Min occurs at (i,j):', ij_min)
+print('Min MSE for Theta 0 at plot_t0[111][91]', plot_t0[111][91])
+print('Min MSE for Theta 1 at plot_t1[111][91]', plot_t1[111][91])
+# Plotting MSE
+fig = plt.figure(figsize= [10,10])
+ax = fig.add_subplot(projection='3d')
+
+ax.set_xlabel("Theta 0", fontsize = 20)
+ax.set_ylabel("Theta 1", fontsize = 20)
+ax.set_zlabel("Cost MSE", fontsize = 20)
+
+ax.plot_surface(plot_t0, plot_t1, plot_cost, cmap=cm.hot, alpha=0.8)
+
+plt.show()
+#ax.scatter(values_array[:,0],values_array[:,1], 
+           #f(values_array[:,0],values_array[:,1]), 
+ ### Partial Derivatives of MSE wrt $\theta_0$ and $\theta_1$
+ 
+ ### $$\frac{\partial MSE}{\partial \theta_0} =  -\frac{2}{n} \sum_{i=1}^{n} \big(y^{(i)} - \theta_0 - \theta_1 x ^{(i)}\big)$$
+ 
+ ### $$\frac{\partial MSE}{\partial \theta_1} =  -\frac{2}{n} \sum_{i=1}^{n} \big(y^{(i)} - \theta_0 - \theta_1 x ^{(i)} \big) \big(x^{(i)} \big )$$
+def grad(x, y, thetas):
+    n = y.size
+    
+    # Challenge: Create theta0_slope and theta1_slope to hold slope values from partial derivs
+    theta0_slope = (-2/n) * sum(y - thetas[0] - thetas[1]*x)
+    theta1_slope = (-2/n) * sum((y - thetas[0] - thetas[1]*x)*x)
+    
+    #return np.array([theta0_slope[0], theta1_slope[0]])
+    #return np.append(arr=theta0_slope, values=theta1_slope)
+    return np.concatenate((theta0_slope, theta1_slope), axis=0)
+multiplier = .01
+thetas = np.array([2.9,2.9])
+
+plot_vals = thetas.reshape(1,2)
+mse_vals = mse(y_5, thetas[0] + thetas[1] * x_5)
+
+for i in range(1000):
+    thetas = thetas - multiplier * grad(x_5, y_5, thetas)
+    plot_vals = np.concatenate((plot_vals, thetas.reshape(1, 2)), axis=0)
+    mse_vals = np.append(arr=mse_vals, values=mse(y_5, thetas[0] + thetas[1]*x_5))
+    
+      
+    
+print("Min occures at Theta 0: ", thetas[0])
+print("Min occures at Theta 1: ", thetas[1])
+print("MSE is: ", mse(y_5, thetas[0]+ thetas[1]  *x_5)[0])
+
+# Plotting MSE
+fig = plt.figure(figsize= [10,10])
+ax = fig.add_subplot(projection='3d')
+
+ax.set_xlabel("Theta 0", fontsize = 20)
+ax.set_ylabel("Theta 1", fontsize = 20)
+ax.set_zlabel("Cost MSE", fontsize =  20)
+
+ax.scatter(plot_vals[:, 0],plot_vals[:, 1] , mse_vals, s= 80, color = "black")
+ax.plot_surface(plot_t0, plot_t1, plot_cost, cmap=cm.rainbow, alpha=0.6)
+
+plt.show()
+#ax.scatter(values_array[:,0],values_array[:,1], 
+           #f(values_array[:,0],values_array[:,1]), 
+
+
+
